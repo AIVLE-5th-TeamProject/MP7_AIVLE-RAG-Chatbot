@@ -1,0 +1,28 @@
+<!doctype html>
+{% load static %}
+<html>
+<head>
+    <title>Django</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{% static 'home/style.css' %}" />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js'></script>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="hero-container">
+            <div class="hero">
+                <h1 class="hero__heading">All about Aivle School</h1>
+                <a class="btn" href="#" title="채팅 시작하기">채팅 시작하기</a>
+            </div>
+            <div class="hero hero--secondary" aria-hidden="true" data-hero>
+                <p class="hero__heading">Welcome to Aivle Chatbot</p>
+                <a class="btn" href="{% url 'chatbot:chatbot_index' %}" title="채팅 시작하기">채팅 시작하기</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>Developed by 허태환(a056144)</footer>
+
+    <script src="{% static 'home/script.js' %}"></script>
+</body>
+</html>
