@@ -1,10 +1,9 @@
 """
 Django 관리자 사이트에 모델 등록, 관리하는 모듈
 """
-
 from django.contrib import admin
 from django.http import HttpRequest
-from .models import Documents
+from .models import Documents, ChatSession
 from django.apps import apps
 import os
 
@@ -35,3 +34,11 @@ class DocumentAdmin(admin.ModelAdmin):
                 obj.delete()
                 os.remove(file_path)
                 self.message_user(request, "Failed to update the vector store: Similar document found", level='error')
+
+
+@admin.register(ChatSession)
+class ChatSessionAdmin(admin.ModelAdmin):
+    list_display = ('session_id', 'start_time', 'end_time')
+    list_filter = ('start_time', 'end_time')
+    search_fields = ('session_id', 'chat_history')
+    actions = ['delete_selected']

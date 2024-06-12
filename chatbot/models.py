@@ -9,3 +9,13 @@ class Documents(models.Model):
 
     def __str__(self):
         return self.file.name
+    
+    
+class ChatSession(models.Model):
+    session_id = models.CharField(max_length=255, unique=True)
+    start_time = models.DateTimeField(auto_now_add=True)
+    end_time = models.DateTimeField(null=True, blank=True)
+    chat_history = models.JSONField()
+
+    def __str__(self):
+        return self.session_id
