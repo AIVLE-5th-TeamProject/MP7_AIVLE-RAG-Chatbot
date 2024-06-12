@@ -8,6 +8,8 @@ const buttonIcon = document.getElementById('button-icon');
 const refreshIcon = document.getElementById('refresh-icon');
 const messageInput = document.getElementById('user-input');
 const typingIndicator = document.getElementById('typingIndicator');
+const faqContainer = document.getElementById('faqContainer');
+const faqCards = document.querySelectorAll('.faq-card');
 
 sendButton.addEventListener('click', sendMessage);
 refreshButton.addEventListener('click', startNewSession);
@@ -158,5 +160,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     messageInput.addEventListener('blur', () => {
         typingIndicator.style.display = 'none';
+    });
+});
+
+// 질문 카드 클릭시 입력창에 입력
+faqCards.forEach(card => {
+    card.addEventListener('click', () => {
+        const faq = card.getAttribute('data-question');
+        messageInput.value = faq;
+        faqContainer.style.display = 'none';
     });
 });
