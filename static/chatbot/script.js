@@ -6,6 +6,8 @@ const backButton = document.getElementById('back-button');
 const adminButton = document.getElementById('admin-button');
 const buttonIcon = document.getElementById('button-icon');
 const refreshIcon = document.getElementById('refresh-icon');
+const messageInput = document.getElementById('user-input');
+const typingIndicator = document.getElementById('typingIndicator');
 
 sendButton.addEventListener('click', sendMessage);
 refreshButton.addEventListener('click', startNewSession);
@@ -16,6 +18,8 @@ userInput.addEventListener('keydown', handleKeyDown);
 function handleKeyDown(event) {
     if (event.key === 'Enter') {
         sendMessage();
+        messageInput.value = '';
+        typingIndicator.style.display = 'none';
     }
 }
 
@@ -141,3 +145,18 @@ function getSessionId() {
     const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionid'));
     return sessionCookie ? sessionCookie.split('=')[1] : 'default-session-id';
 }
+
+// 메세지 작성 중 ... 출력
+document.addEventListener('DOMContentLoaded', () => {
+    messageInput.addEventListener('input', () => {
+        if (messageInput.value.length > 0) {
+            typingIndicator.style.display = 'flex';
+        } else {
+            typingIndicator.style.display = 'none';
+        }
+    });
+
+    messageInput.addEventListener('blur', () => {
+        typingIndicator.style.display = 'none';
+    });
+});
