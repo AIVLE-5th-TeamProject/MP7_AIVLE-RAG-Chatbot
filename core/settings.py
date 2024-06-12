@@ -107,7 +107,7 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",  # "redis://<EC2_INTERNAL_IP>:6379/1", <- AWS 베포시 바꿔야함 꼭!
+        "LOCATION": "redis://<EC2_INTERNAL_IP>:6379/1", # "redis://127.0.0.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
