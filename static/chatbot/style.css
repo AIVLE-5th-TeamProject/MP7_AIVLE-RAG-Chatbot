@@ -116,7 +116,6 @@ body{
 }
 
 #chat-log i{
-    margin-right: 10px;
     color: #fff;
     border-radius: 5px;
 }
@@ -127,7 +126,7 @@ body{
     color: #eee;
     width: 100%;
     padding: 15px 7px 15px 10px;
-    border-radius: 6px;
+    border-radius: 15px;
 }
 
 .bot{
@@ -142,6 +141,7 @@ body{
 #chat-log #bot-icon i{
     background-color: #9859b7;
     padding: 10px 8px 11px;
+    margin-left: 10px;
 }
 
 .back-button {
