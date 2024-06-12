@@ -2,8 +2,11 @@
 앱의 데이터베이스 테이블 구조를 정의하는 모듈 + API에서 사용할 DAO 정의
 """
 from django.db import models
+import uuid
 
-class Documents(models.Model):
+
+class RagDocument(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     file = models.FileField(upload_to='documents/', default='documents/default.txt')
     uploaded_at = models.DateTimeField(auto_now_add=True)
 

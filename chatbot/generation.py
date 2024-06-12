@@ -229,5 +229,17 @@ class RAGPipeline:
         else:
             print('모두 유사한 청크로 판단되어 해당 문서가 저장되지 않음')
             return False
-        
     
+    
+    def delete_vector_db_by_doc_id(self, doc_id):
+        """
+        주어진 문서 ID에 해당하는 벡터 임베딩을 삭제
+        """
+        # 벡터 데이터베이스에서 모든 문서 가져오기
+        all_documents = self.vector_store._collection.get(include=["metadatas"])
+        documents_to_delete = [doc_id for i, metadata in enumerate(all_documents["metadatas"]) if metadata.get("doc_id") == doc_id]
+        if documents_to_delete:
+            self.vector_store._collection.delete(ids=documents_to_delete)
+            print(f"[벡터 DB 삭제] 문서 ID [{doc_id}]의 임베딩을 벡터 DB에서 삭제했습니다.")
+        else:
+            print(f"[벡터 DB 삭제 실패] 문서 ID [{doc_id}]에 대한 임베딩을 찾을 수 없습니다.")

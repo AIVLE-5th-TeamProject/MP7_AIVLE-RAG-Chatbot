@@ -27,7 +27,7 @@ from drf_yasg import openapi
 
 # from .generation import chat_generation, update_vector_store, initialize_vector_store, initialize_chain
 from .serializers import MessageSerializer 
-from .models import Documents, ChatSession
+from .models import ChatSession, RagDocument
 from .serializers import ChatSessionSerializer
 from django.apps import apps
 from django.shortcuts import get_object_or_404
