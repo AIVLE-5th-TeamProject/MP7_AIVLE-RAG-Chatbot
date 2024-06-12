@@ -11,55 +11,59 @@ sendButton.addEventListener('click', sendMessage);
 refreshButton.addEventListener('click', startNewSession);
 backButton.addEventListener('click', goToMainPage);
 adminButton.addEventListener('click', goToAdminPage);
-userInput.addEventListener('keydown', (event) => {
+userInput.addEventListener('keydown', handleKeyDown);
+
+function handleKeyDown(event) {
     if (event.key === 'Enter') {
         sendMessage();
     }
-});
+}
 
-function sendMessage() {
-    const message = userInput.value.trim();
-    if (message === '') {
-        return;
+function updateButtonIcon(isLoading) {
+    if (isLoading) {
+        buttonIcon.classList.remove('fa-solid', 'fa-paper-plane');
+        buttonIcon.classList.add('fas', 'fa-spinner', 'fa-pulse');
+    } else {
+        buttonIcon.classList.add('fa-solid', 'fa-paper-plane');
+        buttonIcon.classList.remove('fas', 'fa-spinner', 'fa-pulse');
     }
-    appendMessage('user', message);
-    userInput.value = '';
+}
 
-    fetch('/chatbot/result/', {
+function postData(url = '', data = {}) {
+    return fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': getCookie('csrftoken')
         },
-        body: JSON.stringify({ question: message, session_id: getSessionId() })
+        body: JSON.stringify(data)
     })
-        .then(response => response.json())
+        .then(response => response.json());
+}
+
+function sendMessage() {
+    const message = userInput.value.trim();
+    if (message === '') return;
+
+    appendMessage('user', message);
+    userInput.value = '';
+
+    postData('/chatbot/result/', { question: message, session_id: getSessionId() })
         .then(data => {
             appendMessage('bot', data.answer);
-            buttonIcon.classList.add('fa-solid', 'fa-paper-plane');
-            buttonIcon.classList.remove('fas', 'fa-spinner', 'fa-pulse');
+            updateButtonIcon(false);
         })
         .catch(error => {
             console.error('Error:', error);
             appendMessage('bot', 'Error: Check Your API Key!');
-            buttonIcon.classList.add('fa-solid', 'fa-paper-plane');
-            buttonIcon.classList.remove('fas', 'fa-spinner', 'fa-pulse');
+            updateButtonIcon(false);
         });
 
-    buttonIcon.classList.remove('fa-solid', 'fa-paper-plane');
-    buttonIcon.classList.add('fas', 'fa-spinner', 'fa-pulse');
+        updateButtonIcon(true);
 }
 
 function startNewSession() {
-    fetch('/chatbot/new_session/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify({})
-    })
-        .then(response => response.json())
+    postData('/chatbot/new_session/', {})
         .then(data => {
             console.log('New session started:', data.session_id);
             // Clear the chat log
