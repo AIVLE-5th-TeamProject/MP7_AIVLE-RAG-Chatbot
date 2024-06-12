@@ -20,5 +20,5 @@ config = {
         "input_directory" : "./documents",
     },
     "similarity_k" : 0.15,
-    "retriever_k" : 3,
+    "retriever_k" : 1.1,
 }

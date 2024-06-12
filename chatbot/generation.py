@@ -24,6 +24,7 @@ from .constants import contextualize_q_prompt, qa_prompt
 # from .models import Documents
 
 
+
 # Agent-Tool 사용 시도해보기
 class RAGPipeline:
     
@@ -35,7 +36,7 @@ class RAGPipeline:
             model       = config['llm_predictor']['model_name'],
             temperature = config['llm_predictor']['temperature']
         )
-        self.vectordb   = self.init_vector_store()
+        self.vector_store   = self.init_vector_store()
         self.retriever  = self.init_retriever()
         self.chain      = self.init_chain()
         self.session_histories = {}    
@@ -57,7 +58,7 @@ class RAGPipeline:
         다른 검색방법 사용해보기
         Hybrid Search
         """
-        retriever = self.vectordb.as_retriever(
+        retriever = self.vector_store.as_retriever(
             search_kwargs = {"k": config["retriever_k"]},
             search_type   = "similarity"
         )
@@ -168,6 +169,7 @@ class RAGPipeline:
             print(f'유사도 검사 중...results : {results}')
             if results and results[0][1] <= self.SIMILARITY_THRESHOLD:
                 print(f"유사한 청크로 판단되어 추가되지 않음 - {results[0][1]}")
+                
                 continue  # 유사한 문서가 존재하면 추가하지 않음
 
             chunks = self.split_document(doc)
@@ -180,3 +182,5 @@ class RAGPipeline:
         else:
             print('모두 유사한 청크로 판단되어 해당 문서가 저장되지 않음')
             return False
+        
+    
