@@ -107,8 +107,13 @@ function appendMessage(sender, message) {
     }
 
     iconElement.appendChild(icon);
-    chatElement.appendChild(iconElement);
-    chatElement.appendChild(messageElement);
+    if (sender === 'user') {
+        chatElement.appendChild(iconElement);
+        chatElement.appendChild(messageElement);
+    } else {
+        chatElement.appendChild(messageElement);
+        chatElement.appendChild(iconElement);
+    }
     chatLog.appendChild(chatElement);
     chatLog.scrollTop = chatLog.scrollHeight;
 }
