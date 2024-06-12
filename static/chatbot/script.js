@@ -3,12 +3,14 @@ const userInput = document.getElementById('user-input');
 const sendButton = document.getElementById('send-button');
 const refreshButton = document.getElementById('refresh-button');
 const backButton = document.getElementById('back-button');
+const adminButton = document.getElementById('admin-button');
 const buttonIcon = document.getElementById('button-icon');
 const refreshIcon = document.getElementById('refresh-icon');
 
 sendButton.addEventListener('click', sendMessage);
 refreshButton.addEventListener('click', startNewSession);
 backButton.addEventListener('click', goToMainPage);
+adminButton.addEventListener('click', goToAdminPage);
 userInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
         sendMessage();
@@ -79,6 +81,10 @@ function startNewSession() {
 
 function goToMainPage() {
     window.location.href = '/';
+}
+
+function goToAdminPage() {
+    window.location.href = '/admin/';
 }
 
 function appendMessage(sender, message) {
