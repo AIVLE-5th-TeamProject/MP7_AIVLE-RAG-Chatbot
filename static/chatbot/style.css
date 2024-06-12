@@ -206,3 +206,7 @@ body{
 .back-button i:after {
     background-color: #1a2857;
 }
+
+#typingIndicator {
+    display: none;
+}
