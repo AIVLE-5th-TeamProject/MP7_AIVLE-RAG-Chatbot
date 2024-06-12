@@ -75,33 +75,82 @@
 
 1. 현재 레포지토리 본인 로컬로 가져오기
 ```
-git clone ...
+>> git clone https://github.com/AIVLE-5th-TeamProject/MP7_AIVLE-RAG-Chatbot.git
 ```
+이후 해당 프로젝트를 VScode로 열어줍니다.
 
-2. 가상환경 생성 및 실행
+2. 가상환경 생성 및 활성화하기
 ```
-conda activate ...
+>> conda create --name MP7 python=3.11.9
+>> conda activate MP7
 ```
 
 3. 가상환경에 필요한 모듈 설치
 ```
-pip install -r requirements.txt
+>> pip install -r requirements.txt
 ```
 
-3. 프로젝트 루트 경로에서 서버 실행
+4. 데이터베이스 마이그레이션 파일 생성
 ```
-cd [현재 프로젝트 루트 디렉토리 경로]
-python manage.py runserver
-```
-
-4. 로컬에서 실행 중인 서버 접속
+>> python manage.py makemigrations
 ```
 
+5. 생성된 마이그레이션 파일 데이터베이스에 적용
+```
+>> python manage.py migrate
 ```
 
+6. 장고 서버 개발모드로 실행
+```
+>> cd [현재 프로젝트 루트 디렉토리 경로]
+>> python manage.py runserver
+```
+
+7. 관리자 페이지 접근용 슈퍼유저 생성 이후 아래와 같이 사용할 Username, Email, Password 지정
+```
+>> python manage.py createsuperuser
+
+
+>> Username (leave blank to use 'your-username'): admin
+>> Email address: admin@example.com
+>> Password: aivle202405
+>> Password (again): aivle202405
+Superuser created successfully.
+```
+
+8. 로컬에서 서버 실행 및 접속
+```
+>> python manage.py runserver
+
+-----vector_store 초기화 완료-----
+-----retriever 초기화 완료-----
+-----RAG chain 초기화 완료-----
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+June 12, 2024 - 04:31:12
+Django version 5.0.6, using settings 'core.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+```
+서버를 실행하면 자동으로 database 폴더 하위에 SQlite에서 제공하는 ChromaDB가 생성됩니다.
+
+
+9. 웹 페이지에 접근 (로컬에서 실행 중)하려면 http://127.0.0.1:8000/ 으로 접속합니다.
+
+10. admin 페이지에 접근 하려면 http://127.0.0.1:8000/admin 으로 접속합니다.
+
+11. swgger 문서를 통해 API 테스트를 해보려면 http://127.0.0.1:8000/swagger 으로 접속합니다.
 
 
 
+배포시 settings.py 의 DEBUG = False 으로 변경합니다.
+ settings.py에서 MEDIA_URL = '/media/' 추가
+
+ 
 ## 기술 스택
 
 ## 아키텍처
+
+

@@ -46,7 +46,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),    
     path('', index),
-    # path('', MainIndexView.as_view(), name='main_index'),
     path("chatbot/", include("chatbot.urls")),
 ]
 

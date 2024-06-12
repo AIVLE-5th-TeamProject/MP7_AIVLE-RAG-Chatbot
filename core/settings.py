@@ -138,6 +138,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 # 각 앱 아래의 static 폴더를 정적파일 경로로 지정
 STATIC_URL = "static/"
+MEDIA_URL = '/media/'
 
 # # root 아래의 static 폴더를 정적파일에 추가
 STATICFILES_DIRS = [ BASE_DIR / 'static', ]
