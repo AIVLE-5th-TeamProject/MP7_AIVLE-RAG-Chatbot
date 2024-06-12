@@ -1,16 +1,29 @@
 const hero = document.querySelector('[data-hero]');
 
-window.addEventListener('mousemove', (e) => {
-    const { clientX, clientY } = e;
-    const x = Math.round((clientX / window.innerWidth) * 100);
-    const y = Math.round((clientY / window.innerHeight) * 100);
+const updatePosition = (x, y) => {
+    const xPercent = Math.round((x / window.innerWidth) * 100);
+    const yPercent = Math.round((y / window.innerHeight) * 100);
 
     gsap.to(hero, {
-        '--x': `${x}%`,
-        '--y': `${y}%`,
+        '--x': `${xPercent}%`,
+        '--y': `${yPercent}%`,
         duration: 0.3,
         ease: 'sine.out',
     });
+}
+
+window.addEventListener('mousemove', (e) => {
+    e.preventDefault();
+    const { clientX, clientY } = e;
+    updatePosition(clientX, clientY);
+});
+
+window.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (e.touches.length > 0) {
+        const { clientX, clientY } = e.touches[0];
+        updatePosition(clientX, clientY);
+    }
 });
 
 const buttons = document.querySelectorAll('.btn');
