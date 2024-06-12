@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
 
 *{
     font-family: 'Poppins', sans-serif;
@@ -209,4 +210,50 @@ body{
 
 #typingIndicator {
     display: none;
+}
+
+.faq-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    width: 100%;
+    gap: 20px;
+    margin-bottom: 4rem;
+    flex-wrap: wrap;
+}
+
+.faq-card {
+    font-family: "Noto Sans KR", sans-serif;
+    height: 9rem;
+    width: 10rem;
+    padding: 10px;
+    border: 1px;
+    border-radius: 15px;
+    background-color: transparent;
+    color: #ccc;
+    cursor: pointer;
+    float: left;
+    transition: background-color 0.3s;
+    border-style: solid;
+    border-color: #8e8e8e;
+    border-width: 1px;
+    font-weight: 500;
+}
+
+.faq-card:hover {
+    background-color: #5f6069;
+}
+
+@media (max-width: 450px) {
+    .faq-container {
+        height: auto; /* 높이를 자동으로 조정 */
+        gap: 10px; /* 간격을 줄임 */
+    }
+
+    .faq-card {
+        font-size: 13px;
+        height: 7rem; /* 높이를 줄임 */
+        width: 8rem; /* 너비를 줄임 */
+    }
 }
