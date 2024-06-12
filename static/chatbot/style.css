@@ -52,6 +52,7 @@ body{
 .input-container button{
     padding: 8px 20px;
     border-radius: 5px;
+    background-color: #343541;
 }
 
 #user-input{
@@ -76,7 +77,7 @@ body{
     align-items: center;
     justify-content: center;
     border: none;
-    background-color: #4caf50;
+    /* background-color: #4caf50; */
     color: #fff;
     cursor: pointer;
     margin-left: 15px;
@@ -89,6 +90,12 @@ body{
 
 #refresh-button{
     margin-left: 4px;
+    border: none;
+    color: white;
+}
+
+#refresh-button:hover {
+    cursor: pointer;
 }
 
 .chat-container{
