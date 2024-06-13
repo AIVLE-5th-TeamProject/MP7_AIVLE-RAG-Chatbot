@@ -2,6 +2,11 @@
 인덱스 생성, RAG 파이프라인 구축
 '''
 import csv
+import redis
+import json
+from django.conf import settings
+from .models import ChatSession # lazy load 추가
+from django.utils import timezone
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain.schema import HumanMessage, SystemMessage, Document
@@ -24,22 +29,23 @@ from .constants import contextualize_q_prompt, qa_prompt
 # from .models import Documents
 
 
+
 # Agent-Tool 사용 시도해보기
 class RAGPipeline:
     
     def __init__(self):
         """ 객체 생성 시 멤버 변수 초기화 """
-        
         self.SIMILARITY_THRESHOLD = config["similarity_k"]
         self.llm = ChatOpenAI(
             model       = config['llm_predictor']['model_name'],
             temperature = config['llm_predictor']['temperature']
         )
-        self.vectordb   = self.init_vector_store()
+        self.vector_store   = self.init_vector_store()
         self.retriever  = self.init_retriever()
         self.chain      = self.init_chain()
         self.session_histories = {}    
-
+        self.redis_client = redis.Redis.from_url(settings.CACHES["default"]["LOCATION"])
+        
     
     def init_vector_store(self):
         """ Vector store 초기화 """
@@ -48,7 +54,7 @@ class RAGPipeline:
             persist_directory=config["chroma"]["persist_dir"], 
             embedding_function=embeddings
         )
-        print(f"-----vector_store 초기화 완료-----")
+        print(f"[초기화] vector_store 초기화 완료")
         return vector_store
         
         
@@ -57,11 +63,11 @@ class RAGPipeline:
         다른 검색방법 사용해보기
         Hybrid Search
         """
-        retriever = self.vectordb.as_retriever(
+        retriever = self.vector_store.as_retriever(
             search_kwargs = {"k": config["retriever_k"]},
             search_type   = "similarity"
         )
-        print(f"-----retriever 초기화 완료-----")
+        print(f"[초기화] retriever 초기화 완료")
         return retriever
 
 
@@ -84,19 +90,18 @@ class RAGPipeline:
         # 최종 체인 생성
         rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
-        print("-----RAG chain 초기화 완료-----")
+        print("[초기화] RAG chain 초기화 완료")
         return rag_chain
     
     
     def chat_generation(self, question: str, session_id: str) -> dict:
-        
         # 채팅 기록 관리
         def get_session_history(session_id: str) -> BaseChatMessageHistory:
             if session_id not in self.session_histories:
                 self.session_histories[session_id] = ChatMessageHistory()
-                print(f"-----새로운 세션을 생성합니다.-----> {session_id}")
+                print(f"[히스토리 생성] 새로운 히스토리를 생성합니다. 세션 ID: {session_id}")
             return self.session_histories[session_id]
-        
+
         conversational_rag_chain = RunnableWithMessageHistory(
             self.chain,
             get_session_history,
@@ -105,15 +110,58 @@ class RAGPipeline:
             output_messages_key="answer"
         )
 
-        
         response = conversational_rag_chain.invoke(
             {"input": question},
             config={"configurable": {"session_id": session_id}}
-        )# ["answer"] 
-        
-        print(f'=====실제 모델 응답 : response => \n{response}\n')
-        print(f"=====세션 id [{session_id}]에서 답변을 생성했습니다.=====")
+        )
+
+        print(f'[응답 생성] 실제 모델 응답: response => \n{response}\n')
+        print(f"[응답 생성] 세션 ID [{session_id}]에서 답변을 생성했습니다.")
+
+        # Redis에 대화 기록 저장
+        chat_history_key = f"chat_history:{session_id}"
+        try:
+            print(f'--------> Redis 키: {chat_history_key}')
+            chat_history = self.redis_client.get(chat_history_key)
+            print('-------->',chat_history)
+            if chat_history:
+                chat_history = json.loads(chat_history)
+            else:
+                chat_history = []
+
+            chat_history.append({"question": question, "answer": response["answer"]})
+            print(f'=========> 저장할 대화 기록: {chat_history}')
+            print(f'=========> 저장할 대화 기록 json: {json.dumps(chat_history)}')
+            self.redis_client.set(chat_history_key, json.dumps(chat_history))        
+            print(f"[Redis 저장] 세션 ID [{session_id}]의 대화 기록을 Redis에 저장했습니다.")
+        except Exception as e:
+            print(f"[Redis 저장 실패] 세션 ID [{session_id}]의 대화 기록 저장 중 오류 발생: {e}")
+
         return response["answer"]
+
+    
+    
+    def save_session_to_db(self, session_id: str):
+        """
+        Redis에 저장된 대화 기록을 데이터베이스로 옮김
+        """
+        chat_history_key = f"chat_history:{session_id}"
+        print(f"[DB 저장] Redis에서 대화 기록을 가져옵니다: {chat_history_key}")
+        chat_history = self.redis_client.get(chat_history_key)
+        if chat_history:
+            chat_history = json.loads(chat_history)
+            print(f"[DB 저장] Redis에서 가져온 대화 기록: {chat_history}")
+            ChatSession.objects.create(
+                session_id=session_id,
+                end_time=timezone.now(),
+                chat_history=chat_history
+            )
+            self.redis_client.delete(chat_history_key)
+            print(f"[DB 저장] 세션 ID [{session_id}]의 대화 기록을 데이터베이스에 저장했습니다.")
+        else:
+            print(f"[DB 저장 실패] 세션 ID [{session_id}]에 대한 대화 기록을 찾을 수 없습니다.")
+    
+    
     
     
     # 여기부터 아래에 있는 메서드는 추후 utils.py으로 이동 예정
@@ -168,6 +216,7 @@ class RAGPipeline:
             print(f'유사도 검사 중...results : {results}')
             if results and results[0][1] <= self.SIMILARITY_THRESHOLD:
                 print(f"유사한 청크로 판단되어 추가되지 않음 - {results[0][1]}")
+                
                 continue  # 유사한 문서가 존재하면 추가하지 않음
 
             chunks = self.split_document(doc)
@@ -180,3 +229,17 @@ class RAGPipeline:
         else:
             print('모두 유사한 청크로 판단되어 해당 문서가 저장되지 않음')
             return False
+    
+    
+    def delete_vector_db_by_doc_id(self, doc_id):
+        """
+        주어진 문서 ID에 해당하는 벡터 임베딩을 삭제
+        """
+        # 벡터 데이터베이스에서 모든 문서 가져오기
+        all_documents = self.vector_store._collection.get(include=["metadatas"])
+        documents_to_delete = [doc_id for i, metadata in enumerate(all_documents["metadatas"]) if metadata.get("doc_id") == doc_id]
+        if documents_to_delete:
+            self.vector_store._collection.delete(ids=documents_to_delete)
+            print(f"[벡터 DB 삭제] 문서 ID [{doc_id}]의 임베딩을 벡터 DB에서 삭제했습니다.")
+        else:
+            print(f"[벡터 DB 삭제 실패] 문서 ID [{doc_id}]에 대한 임베딩을 찾을 수 없습니다.")

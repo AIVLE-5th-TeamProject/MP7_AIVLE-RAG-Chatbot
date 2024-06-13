@@ -19,6 +19,6 @@ config = {
     "path" : {
         "input_directory" : "./documents",
     },
-    "similarity_k" : 0.15,
-    "retriever_k" : 3,
+    "similarity_k" : 0.15, # 유사도 측정시 기준 값
+    "retriever_k" : 3, # top k 개 청크 가져오기
 }
