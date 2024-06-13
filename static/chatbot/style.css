@@ -139,6 +139,13 @@ body{
     padding: 10px 11px;
 }
 
+#user-icon i {
+    background-color: #19c37d;
+    padding: 10px 11px;
+    border-radius: 10px;
+    color: #eee;
+}
+
 #chat-log #bot-icon i{
     background-color: #9859b7;
     padding: 10px 8px 11px;
@@ -219,14 +226,14 @@ body{
     height: 200px;
     width: 100%;
     gap: 20px;
-    margin-bottom: 4rem;
+    margin-bottom: 1rem;
     flex-wrap: wrap;
 }
 
 .faq-card {
     font-family: "Noto Sans KR", sans-serif;
-    height: 9rem;
-    width: 10rem;
+    height: 6rem;
+    width: 7rem;
     padding: 10px;
     border: 1px;
     border-radius: 15px;
@@ -247,13 +254,70 @@ body{
 
 @media (max-width: 450px) {
     .faq-container {
-        height: auto; /* 높이를 자동으로 조정 */
-        gap: 10px; /* 간격을 줄임 */
+        height: auto;
+        gap: 8px;
+        margin-bottom: 3rem;
     }
 
     .faq-card {
         font-size: 13px;
-        height: 7rem; /* 높이를 줄임 */
-        width: 8rem; /* 너비를 줄임 */
+        height: 4rem;
+        width: 4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .faq-container {
+        height: auto;
+        gap: 15px;
+        margin-bottom: 3rem;
+    }
+
+    .faq-card {
+        font-size: 13px;
+        height: 5rem;
+        width: 6rem;
+    }
+}
+
+.loading {
+    width: 8vw;
+    /* margin-top: 100px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading span {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background-color: gray;
+    border-radius: 50%;
+    animation: loading 1s linear infinite;
+    background-color: white;
+}
+
+.loading span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.loading span:nth-child(2) {
+    animation-delay: 0.2s;
+    margin: 0px 7px 
+}
+
+.loading span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes loading {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
     }
 }
