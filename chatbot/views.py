@@ -111,13 +111,25 @@ class ChatbotResponseView(APIView, TemplateResponseMixin):
         print("ChatbotResponseView POST 호출됨")
         question = request.data.get('question')
         
-        session_id = request.data.get('session_id')
-        # 세션 ID 확인 및 생성
-        if not session_id or session_id == 'default-session-id':
+        
+        if 'session_id' in request.session:
+            session_id = request.session['session_id']
+        else:
             session_id = str(uuid.uuid4())
             request.session['session_id'] = session_id
             print(f'새로운 세션 생성 >> {session_id}')
+            
+        # print('===========================================>',session_id)
+            
+        # session_id = request.data.get('session_id')
+        # # 세션 ID 확인 및 생성
+        # if not session_id or session_id == 'default-session-id':
+        #     session_id = str(uuid.uuid4())
+        #     request.session['session_id'] = session_id
+        #     print(f'새로운 세션 생성 >> {session_id}')
         
+
+
         
         print(f'현재 세션 ID : {session_id}')
         # 전역 pipeline 객체 가져오기
