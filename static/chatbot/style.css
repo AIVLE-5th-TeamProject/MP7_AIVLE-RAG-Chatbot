@@ -139,6 +139,13 @@ body{
     padding: 10px 11px;
 }
 
+#user-icon i {
+    background-color: #19c37d;
+    padding: 10px 11px;
+    border-radius: 10px;
+    color: #eee;
+}
+
 #chat-log #bot-icon i{
     background-color: #9859b7;
     padding: 10px 8px 11px;
@@ -255,5 +262,47 @@ body{
         font-size: 13px;
         height: 7rem; /* 높이를 줄임 */
         width: 8rem; /* 너비를 줄임 */
+    }
+}
+
+.loading {
+    width: 8vw;
+    /* margin-top: 100px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading span {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background-color: gray;
+    border-radius: 50%;
+    animation: loading 1s linear infinite;
+    background-color: white;
+}
+
+.loading span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.loading span:nth-child(2) {
+    animation-delay: 0.2s;
+    margin: 0px 7px 
+}
+
+.loading span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes loading {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
     }
 }
