@@ -4,6 +4,7 @@
 import os
 import csv
 from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -11,21 +12,25 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from django.views.generic.base import TemplateResponseMixin
-
-from langchain.schema import Document
+from django.views import View
+from .models import ChatSession
 
 from rest_framework import status
+from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 # from .generation import chat_generation, update_vector_store, initialize_vector_store, initialize_chain
 from .serializers import MessageSerializer 
-from .models import Documents
+from .models import ChatSession, RagDocument
+from .serializers import ChatSessionSerializer
 from django.apps import apps
+from django.shortcuts import get_object_or_404
 import uuid
 
     
@@ -52,7 +57,7 @@ class ChatbotIndexView(TemplateView):
 
 class StartNewSessionView(APIView):
     permission_classes = [AllowAny]
-    
+
     @swagger_auto_schema(
         operation_id='버튼을 눌러 새로운 채팅 시작하기',
         operation_description='유저가 새로운 채팅 시작 버튼을 누르면 새로운 세션으로 변경(현재 대화 문맥가 다른 별도의 대화 시작)',
@@ -61,25 +66,34 @@ class StartNewSessionView(APIView):
         responses={200: 'Success'}
     )
     def post(self, request):
-        # 아직 미완성 API
-        # 여기에 기존 세션에 존재하는 채팅 내용 DB에 저장하는 기능 구현 필요
-        
+        print("StartNewSessionView POST 호출됨")
+        # 기존 세션 저장
+        if 'session_id' in request.session:
+            session_id = request.session['session_id']
+            pipeline = apps.get_app_config('chatbot').pipeline
+            print(f"[세션 저장] 세션 ID: {session_id}")
+            pipeline.save_session_to_db(session_id)
+
         # 기존 세션 삭제
         request.session.flush()
-        
-        # RAGPipeline 객체 초기화
-        apps.get_app_config('chatbot').initialize_pipeline()
-        print(f'새로운 RAGpineline 객체 생성')
-        
-        # 새로운 세션 생성        
+        print("[세션 삭제] 기존 세션을 삭제했습니다.")
+
+        # 새로운 세션 생성
         session_id = str(uuid.uuid4())
         request.session['session_id'] = session_id
         request.session['question'] = None
         request.session['answer'] = None
-        print(f'새로운 세션 생성 >> {session_id}')
-        
-        return JsonResponse({'message': 'New session started', 'session_id': session_id})
- 
+        print(f"[새로운 세션 생성] 새로운 세션 ID: {session_id}")
+
+        # RAGPipeline 객체 초기화
+        apps.get_app_config('chatbot').initialize_pipeline()
+        print(f"[RAGPipeline 초기화] 새로운 RAGPipeline 객체를 생성했습니다.")
+
+        return Response({'message': 'New session started', 'session_id': session_id})
+
+
+
+
 
 class ChatbotResponseView(APIView, TemplateResponseMixin):
     permission_classes = [AllowAny]
@@ -96,8 +110,28 @@ class ChatbotResponseView(APIView, TemplateResponseMixin):
     def post(self, request):
         print("ChatbotResponseView POST 호출됨")
         question = request.data.get('question')
-        session_id = request.data.get('session_id')
+        
+        
+        if 'session_id' in request.session:
+            session_id = request.session['session_id']
+        else:
+            session_id = str(uuid.uuid4())
+            request.session['session_id'] = session_id
+            print(f'새로운 세션 생성 >> {session_id}')
+            
+        # print('===========================================>',session_id)
+            
+        # session_id = request.data.get('session_id')
+        # # 세션 ID 확인 및 생성
+        # if not session_id or session_id == 'default-session-id':
+        #     session_id = str(uuid.uuid4())
+        #     request.session['session_id'] = session_id
+        #     print(f'새로운 세션 생성 >> {session_id}')
+        
 
+
+        
+        print(f'현재 세션 ID : {session_id}')
         # 전역 pipeline 객체 가져오기
         pipeline = apps.get_app_config('chatbot').pipeline
         
@@ -127,55 +161,41 @@ class ChatbotResponseView(APIView, TemplateResponseMixin):
 
         context = {'question': question, 'answer': answer}
         return render(request, 'chatbot/result.html', context)
+    
+    
+class ChatSessionViewSet(viewsets.ViewSet):
+    permission_classes = [IsAdminUser]
+    
+    @swagger_auto_schema(
+        operation_id='list_sessions',
+        operation_description='모든 채팅 세션 목록을 가져옵니다.',
+        responses={200: ChatSessionSerializer(many=True)}
+    )
+    def list(self, request):
+        queryset = ChatSession.objects.all()
+        serializer = ChatSessionSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
-# request.session.flush() 세션 삭제
+    @swagger_auto_schema(
+        operation_id='retrieve_session',
+        operation_description='세션 ID로 특정 채팅 세션을 가져옵니다.',
+        responses={200: ChatSessionSerializer()}
+    )
+    def retrieve(self, request, pk=None):
+        queryset = ChatSession.objects.all()
+        session = get_object_or_404(queryset, session_id=pk)
+        serializer = ChatSessionSerializer(session)
+        return Response(serializer.data)
 
 
-'''
-아래는 파일 업로드 및 검증 수행하는 API (사용하려면 주석 풀고, urls.py도 주석 풀 것)
-=> Admin 페이지에서만 접근 가능하게 수정함.
-'''
-# @method_decorator(csrf_exempt, name='dispatch') # CSRF 토큰 검증을 비활성화 - 말고 다른 방법은 없는지...
-# @method_decorator(staff_member_required, name='dispatch') # 관리자만 접근 가능
-# class UpdateDocumentView(APIView):
-#     permission_classes = [AllowAny]
-#     parser_classes = [MultiPartParser, FormParser]
-
-#     file_param = openapi.Parameter(
-#         'file',
-#         openapi.IN_FORM,
-#         description="업로드할 문서 파일",
-#         type=openapi.TYPE_FILE,
-#         required=True
-#     )
-
-#     @swagger_auto_schema(
-#         operation_id='문서 업로드 및 벡터 DB에 추가',
-#         operation_description='[Admin Only] 문서를 업로드하고 벡터 DB에 추가합니다.',
-#         tags=['Documents'],
-#         manual_parameters=[file_param],
-#         responses={200: 'Success'}
-#     )
-#     def post(self, request):
-#         if 'file' not in request.FILES:
-#             return JsonResponse({'error': 'No file provided'}, status=status.HTTP_400_BAD_REQUEST)
-
-#         file = request.FILES['file']
-
-#         # 파일 이름 중복 확인
-#         if Documents.objects.filter(filename=file.name).exists():
-#             print(f"File {file.name} already exists")  # 터미널에 로그 출력
-#             return JsonResponse({'status': '이미 존재하는 파일입니다.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        
-#         # DB 내부 파일과 유사도 검증에 실패하면 False 반환함.
-#         if not pipeline.update_vector_db(file=file):
-#             print(f"Similar document found for {file.name}, file not saved")
-#             return JsonResponse({'status': '데이터베이스에 이미 유사한 문서가 존재합니다.'}, status=status.HTTP_409_CONFLICT)
-        
-#         # Document 모델에 저장(RDB 저장)
-#         Documents.objects.create(filename=file.name, file=file)
-
-#         print(f"File {file.name} successfully added to the vector store") 
-#         return JsonResponse({'status': '성공하였습니다.'}, status=status.HTTP_200_OK)
+    @swagger_auto_schema(
+        operation_id='delete_session',
+        operation_description='세션 ID로 특정 채팅 세션을 삭제합니다.',
+        responses={204: 'No Content'}
+    )
+    def destroy(self, request, pk=None):
+        queryset = ChatSession.objects.all()
+        session = get_object_or_404(queryset, session_id=pk)
+        session.delete()
+        return Response({'message': 'Session deleted successfully'}, status=204)

@@ -103,6 +103,19 @@ DATABASES = {
     }
 }
 
+# Redis 설정 추가
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1", # "redis://<EC2_INTERNAL_IP>:6379/1", # 
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
 
 # 비밀번호 유효성 검사
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

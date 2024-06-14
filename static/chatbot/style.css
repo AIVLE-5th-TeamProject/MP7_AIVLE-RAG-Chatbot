@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
 
 *{
     font-family: 'Poppins', sans-serif;
@@ -25,6 +26,9 @@ body{
     font-weight: 500;
     flex: 1;
     text-align: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .container{
@@ -38,12 +42,18 @@ body{
 
 .input-container{
     background-color: #343541;
-    padding: 10px;
+    padding: 12px;
     display: flex;
     justify-content: space-between;
     border-top: 1px solid #5c5c66;
     position: sticky;
     bottom: 0;
+}
+
+.input-container button{
+    padding: 8px 20px;
+    border-radius: 5px;
+    background-color: #343541;
 }
 
 #user-input{
@@ -67,10 +77,8 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 8px 20px;
     border: none;
-    border-radius: 5px;
-    background-color: #4caf50;
+    /* background-color: #4caf50; */
     color: #fff;
     cursor: pointer;
     margin-left: 15px;
@@ -79,6 +87,16 @@ body{
 
 #send-button:hover{
     background-color: #388e3c;
+}
+
+#refresh-button{
+    margin-left: 4px;
+    border: none;
+    color: white;
+}
+
+#refresh-button:hover {
+    cursor: pointer;
 }
 
 .chat-container{
@@ -99,7 +117,6 @@ body{
 }
 
 #chat-log i{
-    margin-right: 10px;
     color: #fff;
     border-radius: 5px;
 }
@@ -110,7 +127,7 @@ body{
     color: #eee;
     width: 100%;
     padding: 15px 7px 15px 10px;
-    border-radius: 6px;
+    border-radius: 15px;
 }
 
 .bot{
@@ -122,9 +139,17 @@ body{
     padding: 10px 11px;
 }
 
+#user-icon i {
+    background-color: #19c37d;
+    padding: 10px 11px;
+    border-radius: 10px;
+    color: #eee;
+}
+
 #chat-log #bot-icon i{
     background-color: #9859b7;
     padding: 10px 8px 11px;
+    margin-left: 10px;
 }
 
 .back-button {
@@ -132,13 +157,13 @@ body{
     background-color: #1a2857;
     color: #fff;
     display: inline-block;
-    font-size: 14px;
+    font-size: 13px;
     line-height: 2em;
-    width: 7em;
+    width: 6em;
     height: 2em;
     text-align: center;
     font-family: Arial, sans-serif;
-    font-weight: bold;
+    font-weight: 500;
     position: relative;
     left: 1%;
     overflow: hidden;
@@ -188,4 +213,111 @@ body{
 
 .back-button i:after {
     background-color: #1a2857;
+}
+
+#typingIndicator {
+    display: none;
+}
+
+.faq-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    width: 100%;
+    gap: 20px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.faq-card {
+    font-family: "Noto Sans KR", sans-serif;
+    height: 6rem;
+    width: 7rem;
+    padding: 10px;
+    border: 1px;
+    border-radius: 15px;
+    background-color: transparent;
+    color: #ccc;
+    cursor: pointer;
+    float: left;
+    transition: background-color 0.3s;
+    border-style: solid;
+    border-color: #8e8e8e;
+    border-width: 1px;
+    font-weight: 500;
+}
+
+.faq-card:hover {
+    background-color: #5f6069;
+}
+
+@media (max-width: 450px) {
+    .faq-container {
+        height: auto;
+        gap: 8px;
+        margin-bottom: 3rem;
+    }
+
+    .faq-card {
+        font-size: 13px;
+        height: 4rem;
+        width: 4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .faq-container {
+        height: auto;
+        gap: 15px;
+        margin-bottom: 3rem;
+    }
+
+    .faq-card {
+        font-size: 13px;
+        height: 5rem;
+        width: 6rem;
+    }
+}
+
+.loading {
+    width: 8vw;
+    /* margin-top: 100px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading span {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background-color: gray;
+    border-radius: 50%;
+    animation: loading 1s linear infinite;
+    background-color: white;
+}
+
+.loading span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.loading span:nth-child(2) {
+    animation-delay: 0.2s;
+    margin: 0px 7px 
+}
+
+.loading span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes loading {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
 }

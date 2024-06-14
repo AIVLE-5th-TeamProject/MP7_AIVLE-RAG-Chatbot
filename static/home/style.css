@@ -21,8 +21,8 @@ body {
 }
 
 .hero {
-	min-height: 100vh;
-	padding: clamp(1rem, 2vw, 5rem);
+	min-height: 60rem;
+	padding: 3rem 3rem;
 	display: flex;
 	align-items: center;
 	justify-content: center; /* 중앙 정렬 */
@@ -47,11 +47,10 @@ body {
 }
 
 .hero__heading {
-	font-size: clamp(2rem, 5vw, 8rem);
+	font-size: 54px;
 	text-transform: uppercase;
-	margin: 0;
-    max-width: fit-content;
-    text-align: center;
+  max-width: fit-content;
+  text-align: center;
 }
 
 .hero-container {
@@ -68,6 +67,7 @@ body {
 
 /* 버튼 스타일 */
 .btn {
+  font-size: larger;
   font-family: sans-serif;
   color: white;
   text-decoration: none;
