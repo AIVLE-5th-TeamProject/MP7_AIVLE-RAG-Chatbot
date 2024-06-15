@@ -16,7 +16,7 @@
   
 현재 `master` 브랜치는 미니 프로젝트의 최종 결과물로 제출된 버전(v1.0)에 해당됩니다.<br>
 KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었지만 <br>
-챗봇의 성능(정확도 및 답변속도) 향상 및 코드 품질 개선을 위해 추가 개발이 계속 진행될 예정입니다.  
+챗봇의 성능(정확도 및 답변속도) 향상 및 코드 품질 개선을 위해 추가 개발이 계속 진행될 예정입니다.
 
 ---
 
@@ -28,11 +28,12 @@ KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었
   - [1. 프로젝트 주요 기능](#1-main-feature-v10)
   - [2. 필요한 모듈 설치하기](#2-download-and-installation-window)
   - [3. 프로젝트 빌드 방법](#3-getting-started-window)
-  - [4. 버그 및 문제 발생 시 해결 방법](#4-bugs-and-troubleshooting)
-  - [5. 버전 변경 사항 기록보기](#5-changelog)
-  - [6. 프로젝트 팀원 소개](#6-team)
-  - [7. 지원이 필요할 경우](#7-support-and-contact)
-  - [8. 라이선스](#8-license)
+  - [4. 실행 후 사용 방법](#4-useage)
+  - [5. 버그 및 문제 발생 시 해결 방법](#5-bugs-and-troubleshooting)
+  - [6. 버전 변경 사항 기록보기](#6-changelog)
+  - [7. 프로젝트 팀원 소개](#7-team)
+  - [8. 지원이 필요할 경우](#8-support-and-contact)
+  - [9. 라이선스](#9-license)
 
 
 ## 1. Main Feature (v1.0)
@@ -85,12 +86,12 @@ KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었
 
     4. `Windows 키 + R` 을 누르고 `cmd` 를 입력한 후 `Enter`를 눌러 명령 프롬프트를 엽니다.
 
-    5. 다음과 같이 명령어를 입력하여 Redis 서버를 실행합니다.
+    5. redis 디렉토리로 이동한 다음, 다음과 같이 명령어를 입력하여 Redis 서버를 실행합니다. <br> ( [다운 받은 ZIP을 압축 해제 한 경로]/redis 으로 이동해야 합니다. ) 
         ```
         $ cd C:\redis
         ```
         ```
-        $ redis-server.exe
+        $ redis-server
         ```
         Redis 서버가 성공적으로 실행되면 `Ready to accept connections` 메시지가 표시됩니다.
     
@@ -168,32 +169,52 @@ KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었
     서버를 실행하면 database 폴더 하위에 SQlite에서 제공하는 ChromaDB가 생성됩니다.
 
 
-5. 메인(루트) 페이지에 접근하려면 http://127.0.0.1:8000/ 으로 접속합니다.
+## 4. Useage
 
-10. admin 페이지에 접근 하려면 http://127.0.0.1:8000/admin 으로 접속합니다.
+1. 챗봇과 채팅을 시작하기 전, RAG에 사용할 문서를 먼저 업로드 해야 합니다. <br>
+    > 채팅 페이지의 우측 상단 `admin` 버튼을 눌러 관리자페이지어 접근합니다. <br>
+    > 이후 사전에 입력했던 슈퍼유저 계정의 `Username`, `password`를 기입하여 로그인 할 수 있습니다. <br>
+    > 이어서 화면 좌측의 `Rag documents` 를 클릭하고, 우측 상단 `Rag documents 추가`를 클릭하여 RAG에 사용할 문서를 업로드 합니다. <br>
+    > 해당 프로젝트의 `sample` 디렉토리에 샘플로 사용할 수 있는 CSV 파일이 있으니 참고해주세요.
+    > 이후 `파일선택`을 누르고 `저장`버튼을 눌러 원하는 파일을 업로드 합니다. <br>
+    > 업로드 대기 시간 후, "[문서업로드] 벡터스토어 업데이트에 성공하였습니다." 문구가 보이고, 해당 문서가 벡터DB와 파일기반 디렉토리에 저장됩니다.
 
-11. swgger 문서를 통해 API 테스트를 해보려면 http://127.0.0.1:8000/swagger 으로 접속합니다.
+2. 메인(루트) 페이지에 접근하려면 http://127.0.0.1:8000/ 으로 접속합니다.
+
+2. admin 페이지에 접근 하려면 http://127.0.0.1:8000/admin 으로 접속합니다.
+
+3. swgger 문서를 통해 API 테스트를 해보려면 http://127.0.0.1:8000/swagger 으로 접속합니다.
 
 
-## 4. Bugs and Troubleshooting
 
-## 5. Changelog
+## 5. Bugs and Troubleshooting
 
-## 6. Team
+- 문서 업로드 시 유사도 검증 로직 수정 필요(현재는 새로 업로드하는 문서 전체와 기존 문서의 각 청크 끼리 비교함)
+- MAC 환경에서 챗봇을 실행 시, 채팅 내용이 2개씩 보이는 문제 존재
+- 한 번 업로드한 파일 삭제되지 않는 이슈 존재
+- 채팅 속도 관련 성능 개선 필요(메시지 브로커 혹은 Websocket 방식 도입 예정)
+- 관리자 페이지 UI 커스텀 디자인으로 수정 요구됨.(보다 나은 UX를 위해)
+- AIVLE School 공지사항 실시간 추적하여 자동 업데이트 기능 추가 예정
+
+## 6. Changelog
+
+#### - *v1.0 : `Initial Release` (2024-06-13)*
+
+## 7. Team
 
 |<img src="https://avatars.githubusercontent.com/u/135506789?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/96802693?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/91467204?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/79041288?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/59814174?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/133032166?v=4" width="150" height="150"/>|
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |taehwan heo<br/>[@or-m-or](https://github.com/or-m-or)|TaeHui Kim<br/>[@taehui7439](https://github.com/taehui7439)|Yeseo Kim<br/>[@xeonxeonx](https://github.com/xeonxeonx)|[@Han-sangwon](https://github.com/Han-sangwon)|[@Polasia](https://github.com/Polasia)|[@yhjin62](https://github.com/yhjin62)|
 
 
-## 7. Support and Contact
+## 8. Support and Contact
 
 `mail` : htth815@gmail.com <br>
 `kakao Talk ID` : hth815<br> 
 `GitHub Issues` : [Open an issue]()<br>
 `Feature Requests` : [Feature Requests]()
 
-## 8. License
+## 9. License
 
 
 

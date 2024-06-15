@@ -254,4 +254,8 @@ $RECYCLE.BIN/
 # 개인 README
 LOCAL-README.md
 
+# 데이터베이스 파일 및 디렉토리
+database/*
+documents/*
+
 # End of https://www.toptal.com/developers/gitignore/api/windows,visualstudiocode,python,macos
