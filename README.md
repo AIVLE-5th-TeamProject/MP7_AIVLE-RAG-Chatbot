@@ -18,27 +18,28 @@ KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었
 ---
 
 
-
-
-
 🔥 [ KT AIVLE School 5기 미니프로젝트 7차 ] RAG Chatbot 구축하기 <br>
 💻 개발기간 : 2024.06.03 - 2024.06.13
 
 ## 0. 목차
-  - []()
+  - [1. 프로젝트 구성](#1-구성)
+  - [2. 필요한 모듈 설치하기](#2-설치)
+  - [3. 본 프로젝트 빌드 방법](#3-프로젝트-빌드)
+  - [4. 본 프로젝트에 구현된 주요 기능](#4-구현된-주요-기능v10)
+  - [5. 버그 및 문제 발생 시 해결 방법](#5-버그-및-문제-해결-방법)
+  - [6. 버전 변경 사항 기록보기](#6-버전-변경-사항)
+  - [7. 프로젝트 팀원 소개](#7-팀-소개)
+  - [8. 지원이 필요할 경우](#8-지원)
+  - [9. 라이선스](#9-라이선스)
+
+## 1. 프로젝트 구성
 
 
-## 1. 구성
+## 2. 설치(Window)
 
+1. 먼저 Conda 가상환경을 사용하기 위해 Conda 가 설치되어 있지 않다면, 사전에 미리 설치합니다.
 
-## 2. 설치 및 빌드하는 방법
-
-1. 현재 레포지토리 본인 로컬로 가져오기
-    ```bash
-    >> git clone https://github.com/AIVLE-5th-TeamProject/MP7_AIVLE-RAG-Chatbot.git
-    ```
-
-2. 먼저 Redis를 설치한 후 Redis 서버를 실행합니다.
+2. 이어서 Redis를 설치한 후 Redis 서버를 실행합니다.
 
     1. [Redis 공식 Github 페이지](https://github.com/microsoftarchive/redis/releases) 에서 3.0.504 버전의 ZIP파일을 다운로드합니다. (redis-x.y.z.zip)
 
@@ -50,43 +51,83 @@ KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었
 
     5. 다음과 같이 명령어를 입력하여 Redis 서버를 실행합니다.
         ```
-        >> cd C:\redis
+        $ cd C:\redis
         ```
         ```
-        >> redis-server.exe
+        $ redis-server.exe
         ```
         Redis 서버가 성공적으로 실행되면 `Ready to accept connections` 메시지가 표시됩니다.
     
     6. Redis 클라이언트로 정상적으로 연결되었는지 테스트를 합니다.
         - 다른 명령프롬프트를 열고, Redis 디렉토리로 이동합니다.
         ```
-        >> cd C:\redis
+        $ cd C:\redis
         ```
         - Redis 클라이언트 실행
         ```
-        >> redis-cli.exe
+        $ redis-cli.exe
         ```
         - Ping 명령어 실행
         ```
-        >> ping
+        $ ping
         ```
         `Pong` 응답이 표시되면 Redis 서버가 제대로 작동하고 있는 것입니다.
 
+    7. 추후 Redis 서버를 종료하려면 아래 명령어를 사용할 수 있습니다.
+        ```
+        $ redis-cli shutdown
+        ```
 
-3. 이후, 다음 명령어로 초기 설정을 자동으로 수행할 수 있습니다.
-    ```sh
-    >> ./setup.sh
+## 3. 프로젝트 빌드(Window)
+
+
+1. 현재 레포지토리 본인 로컬로 가져오기
+    ```bash
+    $ git clone https://github.com/AIVLE-5th-TeamProject/MP7_AIVLE-RAG-Chatbot.git
     ```
-    이 스크립트를 실행하면, `database` 및 `documents` 폴더를 생성하고, conda 가상환경을 설정한 후 필요한 모듈을 설치합니다. 또한, 데이터베이스 마이그레이션을 수행하고 관리자 계정을 생성합니다.
 
-    스크립트 실행 이후, 쉘에 `슈퍼유저 계정을 생성하려면 아래의 프롬프트에 따라 Username, Email, Password를 입력하세요:` 가 출력되면 관리자 페이지에 접근할 때 사용할 `Username`, `Email`, `Password`를 기입합니다.
+3. 이후, 다음 명령어로 프로젝트 빌드에 필요한 디렉토리를 생성합니다.
+    ```sh
+    $ ./setup.sh
+    ```
+
+4. 가상환경을 생성한 뒤 활성화 합니다. 가상환경에서 사용하는 python 버전은 3.11.9 으로 세팅합니다. 아래 명령어를 그대로 실행하면 이름이 MP7, 파이썬 버전 3.11.9를 사용하는 conda 가상환경이 생성됩니다.
+    ```
+    $ conda create --name MP7 python=3.11.9
+    ```
+
+5. 가상환경을 실행한 후, 필요한 모듈을 설치합니다.
+    ```
+    (MP7)...$ pip install -r requirements.txt 
+    ```
+
+6. 데이터베이스 마이그레이션 파일을 생성합니다.
+    ```
+    (MP7)...$ python manage.py makemigrations
+    ```
+
+7. 생성된 마이그레이션 파일을 데이터베이스에 적용시킵니다.
+    ```
+    (MP7)...$ python manage.py migrate
+    ```
+
+8. 관리자 페이지 접근용 슈퍼유저 계정을 생성합니다. 다음과 같이 사용할 Username, Eamil, Password 를 본인이 원하는대로 지정합니다.
+    ```
+    (MP7)...$ python manage.py createsuperuser
+
+    $ Username (leave blank to use 'your-username'): admin
+    $ Email address: admin@example.com
+    $ Password: 1234
+    $ Password (again): 1234
+    Superuser created successfully.
+    ```
 
 
-4. 이제 거의 다 끝났습니다. 가상환경을 활성화 한 뒤, Django 서버를 실행하고 접속합니다. <br>
+4. 이제 거의 다 끝났습니다. 가상환경이 활성화 되어 있는지 재확인 하고, Redis 서버가 잘 실행 되고 있는지 확인한 뒤, Django 서버를 실행하고 접속합니다. <br>
     (주의) Django 서버가 실행되기 전에 꼭 Redis 서버가 먼저 실행 중이어야 합니다. 
     ```
-    >> conda activate mini7   
-    >> python manage.py runserver
+    $ conda activate mini7   
+    $ python manage.py runserver
     ``` 
     서버를 실행하면 database 폴더 하위에 SQlite에서 제공하는 ChromaDB가 생성됩니다.
 
@@ -99,15 +140,15 @@ KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었
 
 
 
-## 3. 구현된 주요 기능(v1.0)
+## 4. 구현된 주요 기능(v1.0)
 
 
-## 4. 버그 및 문제 해결 방법
+## 5. 버그 및 문제 해결 방법
 
 
-## 5. 버전 변경 사항
+## 6. 버전 변경 사항
 
-## 6. 팀 소개
+## 7. 팀 소개
 
 |<img src="https://avatars.githubusercontent.com/u/135506789?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/96802693?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/91467204?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/79041288?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/59814174?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/133032166?v=4" width="150" height="150"/>|
 |:-:|:-:|:-:|:-:|:-:|:-:|
@@ -115,10 +156,10 @@ KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었
 
 
 
-## 7. 지원
+## 8. 지원
 
 
-## 8. 라이선스
+## 9. 라이선스
 
 
 
