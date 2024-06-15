@@ -28,15 +28,47 @@ KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었
   - [1. 프로젝트 주요 기능](#1-main-feature-v10)
   - [2. 필요한 모듈 설치하기](#2-download-and-installation-window)
   - [3. 프로젝트 빌드 방법](#3-getting-started-window)
-  - [4. 사용 방법](#4-usage)
-  - [5. 버그 및 문제 발생 시 해결 방법](#5-bugs-and-troubleshooting)
-  - [6. 버전 변경 사항 기록보기](#6-changelog)
-  - [7. 프로젝트 팀원 소개](#7-team)
-  - [8. 지원이 필요할 경우](#8-support-and-contact)
-  - [9. 라이선스](#9-license)
+  - [4. 버그 및 문제 발생 시 해결 방법](#4-bugs-and-troubleshooting)
+  - [5. 버전 변경 사항 기록보기](#5-changelog)
+  - [6. 프로젝트 팀원 소개](#6-team)
+  - [7. 지원이 필요할 경우](#7-support-and-contact)
+  - [8. 라이선스](#8-license)
 
 
 ## 1. Main Feature (v1.0)
+
+### 1) 채팅 페이지
+
+- 자주 물어보는 질문에 대해 프롬프트 자동 생성 가능
+- 프롬프트 엔지니어링 적용
+- Langchain 라이브러리 사용 (`create_history_aware_retriever`, `create_stuff_documents_chain`, `create_retrieval_chain`) 
+
+**[ 내부 동작 이해 ]**
+
+1. Langchain의 `create_history_aware_retriever` 을 사용하여 이전 대화 기록을 토대로 벡터 DB에 대해 검색할 쿼리를 생성하고, 이를 기반으로 검색된 문서를 반환하는 체인을 생성합니다. 
+2. `create_history_aware_retriever`는 이전 대화 히스토리가 없을 경우, 입력을 그대로 Retriever로 전달하고 히스토리가 있는 경우에는 정의된 프롬프트에 따라 사용자의 질문을 문맥화 시켜서 질문을 재구성하여 검색 쿼리를 (LLM을 사용하여)생성하고 이를 Retriever으로 전달합니다.
+3. 이후, Langchin의 `create_stuff_documents_chain`을 사용하여 검색된 여러 문서를 하나의 프롬프트로 합쳐서 LLM에 전달합니다. 이 체인은 문서 목록을 받아서 각각 문서를 특정 형식으로 포맷한 다음, 이들을 하나의 문자열로 결합하여 프롬프트로 만듭니다. 이후 이 프롬프트를 LLM에게 전달하여 응답을 생성합니다.<br>
+이때에도 커스텀 프롬프트를 추가해 줄 수 있으며, 본 프로젝트에서는 Retriever으로 검색된 내용을 토대로만 대답해야하며, 모르는 내용에 대해서는 모른다고 대답하게 유도하였습니다.
+이로써 환각현상을 최소화하려 시도하였으며 실제로 임베딩된 문서의 내용에 대해서만 대답할 수 있음을 사전에 정의해둔 기준 질문을 통해 검증하였습니다.
+4. Langchain의 `create_retrieval_chain` 을 최종 체인으로 사용하여 위 두 체인을 엮어 주었으며, 앞서 보았던 `history_aware_retriever`을 Retriever(검색기)으로 `question_answer_chain`을 Generator(생성기)으로 사용합니다.
+5. 마지막으로 Langchain 의 `RunnableWithMessageHistory` 을 사용하여 세션 단위(문맥이 이어지는 하나의 대화 흐름 단위)로 대화 내용을 구분지었습니다. 또한, 긴 대화 내용에 대해서는 대화가 진행됨에 따라 해당 대화 내용에 대한 요약본을 생성하고 이 요약본을 저장하여 이후 대화에 사용함으로써(프롬프트에 포함 시킴으로써) 토큰 사용량을 줄일 수 있습니다. 
+
+
+### 2) 관리자 페이지
+- `Redis` 인 메모리 데이터베이스를 사용하여 하나의 채팅 사용 내역을 세션단위로 저장함.
+  - 메모리 내에서 데이터를 저장하고 처리하여 디스크 기반 데이터베이스에 비해 빠른 읽기 및 쓰기 가능
+  - 키-값 형태로 데이터를 저장할 수 있어 대화 내역을 세션 단위(하나의 대화흐름이 이어지는 단위)로 저장 가능
+- 새로운 문서 업로드 기능, 이전에 업로드하여 벡터DB에 이미 존재하는 문서 중 유사도 점수가 
+일정 기준 보다 크면 업로드 되지 않음.
+- 벡터 DB에 저장된 문서 내용 조회 기능
+- 채팅 사용 이력 표 형태로 조회 가능
+    - 일자/기간 기준 필터링 가능
+    - 마찬가지로 문맥이 유지되는 한번의 대화 흐름을 한개의 인스턴스 단위로 조회 가능
+
+
+### 3) 사용된 데이터
+- 웹 스크래핑으로 `에이블스쿨 홈페이지` 내 FAQ 데이터 수집
+- 웹 크롤링으로 구글에 '에이블스쿨' 키워드로 검색했을 때 등장하는 뉴스기사 수집
 
 
 ## 2. Download and Installation (Window)
@@ -143,32 +175,25 @@ KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었
 11. swgger 문서를 통해 API 테스트를 해보려면 http://127.0.0.1:8000/swagger 으로 접속합니다.
 
 
-## 4. Usage
+## 4. Bugs and Troubleshooting
 
+## 5. Changelog
 
-
-
-
-## 5. Bugs and Troubleshooting
-
-
-## 6. Changelog
-
-## 7. Team
+## 6. Team
 
 |<img src="https://avatars.githubusercontent.com/u/135506789?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/96802693?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/91467204?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/79041288?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/59814174?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/133032166?v=4" width="150" height="150"/>|
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |taehwan heo<br/>[@or-m-or](https://github.com/or-m-or)|TaeHui Kim<br/>[@taehui7439](https://github.com/taehui7439)|Yeseo Kim<br/>[@xeonxeonx](https://github.com/xeonxeonx)|[@Han-sangwon](https://github.com/Han-sangwon)|[@Polasia](https://github.com/Polasia)|[@yhjin62](https://github.com/yhjin62)|
 
 
-## 8. Support and Contact
+## 7. Support and Contact
 
 `mail` : htth815@gmail.com <br>
 `kakao Talk ID` : hth815<br> 
 `GitHub Issues` : [Open an issue]()<br>
 `Feature Requests` : [Feature Requests]()
 
-## 9. License
+## 8. License
 
 
 
