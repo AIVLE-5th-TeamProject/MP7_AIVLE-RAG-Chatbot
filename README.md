@@ -7,6 +7,17 @@
     에이블스쿨 지원자들을 위한 QA Chatbot 서비스
 </h1>
 
+<img alt="Langchain" src="https://img.shields.io/badge/Langchain-1C3C3C.svg?style=for-the-badge&logo=langchain&logoColor=white"/>
+<img alt="python" src ="https://img.shields.io/badge/python-3776AB.svg?&style=for-the-badge&logo=python&logoColor=white"/> 
+<img alt="Django" src ="https://img.shields.io/badge/Django-092E20.svg?&style=for-the-badge&logo=Django&logoColor=white"/> 
+<img alt="OpenAI" src ="https://img.shields.io/badge/OPENAI-412991.svg?&style=for-the-badge&logo=Openai&logoColor=white"/> 
+<img alt="Redis" src ="https://img.shields.io/badge/Redis-FF4438.svg?&style=for-the-badge&logo=Redis&logoColor=black"/>
+<img alt="HTML" src ="https://img.shields.io/badge/HTML5-E34F26.svg?&style=for-the-badge&logo=HTML5&logoColor=white"/> 
+<img alt="CSS3" src ="https://img.shields.io/badge/CSS3-1572B6.svg?&style=for-the-badge&logo=CSS3&logoColor=white"/>
+<img alt="JavaScript" src ="https://img.shields.io/badge/JavaScript-F7DF1E.svg?&style=for-the-badge&logo=JavaScript&logoColor=black"/>
+<img alt="GASP" src ="https://img.shields.io/badge/GASP-88CE02.svg?&style=for-the-badge&logo=GreenSockt&logoColor=black"/>
+
+
 ---
 
 본 프로젝트는 KT 에이블스쿨 5기 미니프로젝트 7차 결과 산출물로, 신규 지원자들을 위한 RAG 기반 챗봇 서비스입니다. 신규 지원자들을 위한 서비스인 만큼, 보다 정확하고 상세한 답변을 제공하는 것에 중점을 두고 개발되었습니다. <br>
@@ -22,24 +33,25 @@ KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었
 💻 개발기간 : 2024.06.03 - 2024.06.13
 
 ## 0. 목차
-  - [1. 프로젝트 구성](#1-구성)
-  - [2. 필요한 모듈 설치하기](#2-설치)
-  - [3. 본 프로젝트 빌드 방법](#3-프로젝트-빌드)
-  - [4. 본 프로젝트에 구현된 주요 기능](#4-구현된-주요-기능v10)
-  - [5. 버그 및 문제 발생 시 해결 방법](#5-버그-및-문제-해결-방법)
-  - [6. 버전 변경 사항 기록보기](#6-버전-변경-사항)
-  - [7. 프로젝트 팀원 소개](#7-팀-소개)
-  - [8. 지원이 필요할 경우](#8-지원)
-  - [9. 라이선스](#9-라이선스)
-
-## 1. 프로젝트 구성
+  - [1. 프로젝트 주요 기능](#1-main-feature-v10)
+  - [2. 필요한 모듈 설치하기](#2-download-and-installation-window)
+  - [3. 프로젝트 빌드 방법](#3-getting-started-window)
+  - [4. 사용 방법](#4-usage)
+  - [5. 버그 및 문제 발생 시 해결 방법](#5-bugs-and-troubleshooting)
+  - [6. 버전 변경 사항 기록보기](#6-changelog)
+  - [7. 프로젝트 팀원 소개](#7-team)
+  - [8. 지원이 필요할 경우](#8-support-and-contact)
+  - [9. 라이선스](#9-license)
 
 
-## 2. 설치(Window)
+## 1. Main Feature (v1.0)
 
-1. 먼저 Conda 가상환경을 사용하기 위해 Conda 가 설치되어 있지 않다면, 사전에 미리 설치합니다.
 
-2. 이어서 Redis를 설치한 후 Redis 서버를 실행합니다.
+## 2. Download and Installation (Window)
+
+1. 먼저 `Conda` 가상환경을 사용하기 위해 사전에 미리 설치합니다.
+
+2. 이어서 `Redis`를 설치한 후 Redis 서버를 실행합니다.
 
     1. [Redis 공식 Github 페이지](https://github.com/microsoftarchive/redis/releases) 에서 3.0.504 버전의 ZIP파일을 다운로드합니다. (redis-x.y.z.zip)
 
@@ -78,7 +90,7 @@ KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었
         $ redis-cli shutdown
         ```
 
-## 3. 프로젝트 빌드(Window)
+## 3. Getting Started (Window)
 
 
 1. 현재 레포지토리 본인 로컬로 가져오기
@@ -139,27 +151,32 @@ KT 에이블스쿨에서 진행하는 미니 프로젝트 기간은 종료되었
 11. swgger 문서를 통해 API 테스트를 해보려면 http://127.0.0.1:8000/swagger 으로 접속합니다.
 
 
-
-## 4. 구현된 주요 기능(v1.0)
-
-
-## 5. 버그 및 문제 해결 방법
+## 4. Usage
 
 
-## 6. 버전 변경 사항
 
-## 7. 팀 소개
+
+
+## 5. Bugs and Troubleshooting
+
+
+## 6. Changelog
+
+## 7. Team
 
 |<img src="https://avatars.githubusercontent.com/u/135506789?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/96802693?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/91467204?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/79041288?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/59814174?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/133032166?v=4" width="150" height="150"/>|
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |taehwan heo<br/>[@or-m-or](https://github.com/or-m-or)|TaeHui Kim<br/>[@taehui7439](https://github.com/taehui7439)|Yeseo Kim<br/>[@xeonxeonx](https://github.com/xeonxeonx)|[@Han-sangwon](https://github.com/Han-sangwon)|[@Polasia](https://github.com/Polasia)|[@yhjin62](https://github.com/yhjin62)|
 
 
+## 8. Support and Contact
 
-## 8. 지원
+`mail` : htth815@gmail.com <br>
+`kakao Talk ID` : hth815<br> 
+`GitHub Issues` : [Open an issue]()<br>
+`Feature Requests` : [Feature Requests]()
 
-
-## 9. 라이선스
+## 9. License
 
 
 
