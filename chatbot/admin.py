@@ -8,6 +8,8 @@ from django.apps import apps
 import os
 
 
+
+
 @admin.register(RagDocument)
 class DocumentAdmin(admin.ModelAdmin):
     list_display = ('file', 'uploaded_at')
@@ -59,3 +61,5 @@ class ChatSessionAdmin(admin.ModelAdmin):
     list_filter = ('start_time', 'end_time')
     search_fields = ('session_id', 'chat_history')
     actions = ['delete_selected']
+
+

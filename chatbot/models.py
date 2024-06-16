@@ -22,3 +22,4 @@ class ChatSession(models.Model):
 
     def __str__(self):
         return self.session_id
+    

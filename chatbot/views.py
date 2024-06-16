@@ -199,3 +199,4 @@ class ChatSessionViewSet(viewsets.ViewSet):
         session = get_object_or_404(queryset, session_id=pk)
         session.delete()
         return Response({'message': 'Session deleted successfully'}, status=204)
+    

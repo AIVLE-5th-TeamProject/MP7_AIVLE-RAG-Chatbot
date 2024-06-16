@@ -13,3 +13,4 @@ urlpatterns = [
     path('api/', include(router.urls)),
     # path("admin/chatbot/update_document/", UpdateDocumentView.as_view(), name='update_document'),
 ]
+
